@@ -217,7 +217,7 @@ window.SITE = (function () {
     },
 
     part0: {
-      title: 'Adverse Weather 3D Scenes',
+      title: '3D Scenes under Adverse Weather',
       items: part0Items,
     },
 
