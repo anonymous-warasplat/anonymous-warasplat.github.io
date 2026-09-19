@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>论文成果展示 · Our Method vs. Comparisons</title>
+  <meta name="description" content="纯静态论文成果展示页：Part 1 本方法 Input/Ours 滑杆对比；Part 2 按天气类别一次性对比 7 种方法（7 个画面 + 6 根滑杆）。原分辨率 256×256，不做任何放大。" />
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+</head>
+<body>
+  <a class="skip-link" href="#part1">跳到主要内容</a>
+
+  <!-- ================= 标题栏：论文题目 / 作者 / 单位（内容来自 data.js） ================= -->
+  <header class="site-header" id="top">
+    <div class="wrap header-inner">
+      <h1 class="site-title" id="siteTitle">WaraSplat</h1>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ================= Part 0 · 恶劣天气 3D 场景：横向四个场景视频 ================= -->
+    <section class="section" id="part0" aria-labelledby="part0Title">
+      <header class="section-head">
+        <h2 class="section-title" id="part0Title"><span class="pin">Part 0</span> <span id="part0Name"></span></h2>
+      </header>
+      <div class="weather-grid" id="part0List"></div>
+    </section>
+
+    <!-- ================= Part 1 · Our Method：每行最多 3 个案例，每个案例一个 VolSplat⟷Ours 滑杆 ================= -->
+    <section class="section" id="part1" aria-labelledby="part1Title">
+      <header class="section-head">
+        <h2 class="section-title" id="part1Title"><span class="pin">Part 1</span> Our Method</h2>
+      </header>
+      <div class="compare-grid" id="part1List"></div>
+    </section>
+
+    <!-- ================= Part 2 · Comparison：天气 Tab + 每场景一次性排布 7 种方法 ================= -->
+    <section class="section" id="part2" aria-labelledby="part2Title">
+      <header class="section-head">
+        <h2 class="section-title" id="part2Title"><span class="pin">Part 2</span> Comparison</h2>
+      </header>
+      <div class="tabs" id="part2Tabs" role="tablist" aria-label="天气类别"></div>
+      <div class="tab-panels" id="part2Panels"></div>
+    </section>
+  </main>
+
+  <!-- 点击 Part 2 的画面放大查看 -->
+  <media-lightbox id="lightbox"></media-lightbox>
+
+  <!-- 图片滑杆：img-comparison-slider（本地 vendor，零依赖、离线可用） -->
+  <script src="assets/vendor/img-comparison-slider.js"></script>
+  <!-- 数据 → 组件 → 渲染逻辑 -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

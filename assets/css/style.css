@@ -1,0 +1,205 @@
+/* =============================================================================
+ * style.css —— 设计令牌、页面骨架、标题栏、区块、页脚
+ * 组件级样式见 components.css
+ * 想换配色只改下面的 :root 变量即可
+ * ========================================================================== */
+
+:root {
+  --bg: #f6f7fa;
+  --surface: #ffffff;
+  --surface-2: #eef1f6;
+  --border: #e2e6ee;
+  --text: #14181f;
+  --text-2: #57606f;
+  --text-3: #8b94a3;
+  --accent: #2563eb;
+  --accent-soft: #e8efff;
+  --ours: #0f9d58;
+  --gt: #b45309;
+  --input: #64748b;
+  --danger: #d92d20;
+  --radius: 14px;
+  --wrap: 1200px;
+  /* 三个部分共用同一套栅格：--row-w = 一行总宽，--card-w = 单张卡片宽度
+     四列时（Part 0）四张卡片正好铺满；三列时（Part 1 / Part 2）左右两张与 Part 0 对齐，
+     中间那张居中，整体边缘在同一条线上 */
+  --row-w: 1168px;
+  --card-w: 280px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06), 0 8px 24px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 24px 60px rgba(16, 24, 40, 0.18);
+  --font-sans: system-ui, -apple-system, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1116;
+    --surface: #161b22;
+    --surface-2: #1d232c;
+    --border: #2a323d;
+    --text: #e8edf4;
+    --text-2: #aeb8c6;
+    --text-3: #7d8797;
+    --accent: #7aa2ff;
+    --accent-soft: #1b2740;
+    --ours: #4ade80;
+    --gt: #f0b357;
+    --input: #94a3b8;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* ------------------------------------------------------------------ 基础 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* hidden 属性必须始终有效（否则会被组件自身的 display 规则覆盖） */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+a {
+  color: var(--accent);
+}
+
+.wrap {
+  width: min(100% - 32px, var(--wrap));
+  margin-inline: auto;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 2000;
+  background: var(--accent);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 0 0 10px 0;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------- 标题栏 */
+.site-header {
+  padding: 56px 0 26px;
+  background:
+    radial-gradient(1100px 320px at 50% -80px, var(--accent-soft), transparent 70%),
+    var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  text-align: center;
+}
+
+.site-title {
+  margin: 0 auto;
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+/* --------------------------------------------------------------- 区块 */
+.section {
+  padding: 44px 0 8px;
+  scroll-margin-top: 24px;
+}
+
+.section-head {
+  margin-bottom: 18px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: clamp(20px, 2.4vw, 26px);
+  letter-spacing: -0.01em;
+}
+
+.pin {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.empty-hint {
+  padding: 24px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+/* --------------------------------------------------------------- 响应式 */
+@media (max-width: 760px) {
+  .site-header {
+    padding: 36px 0 20px;
+  }
+
+  .section {
+    padding-top: 32px;
+  }
+}

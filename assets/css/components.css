@@ -1,0 +1,300 @@
+/* =============================================================================
+ * components.css —— 案例卡片、图片滑杆、天气 Tab、资源自检面板、占位提示
+ *
+ * 关键约束：视频只有 256×256 —— 页面一律按原始尺寸显示，绝不放大
+ *   · Part 0：四类天气场景，宽屏一行 4 个
+ *   · Part 1：按天气分组，每类天气横向一排（Rain 5 个就一行 5 个），每个 = VolSplat⟷Ours 滑杆
+ *   · Part 2：每个场景一行，6 种方法按 2:2:2 横向排开 + Ours + GT（在 <row-compare> 组件内部）
+ * ========================================================================== */
+
+/* ==========================================================================
+ * 三部分共用同一套栅格（Part 0 四列、Part 1 / Part 2 三列）
+ *   · 总宽固定为 --row-w，卡片固定 --card-w：四列时四张铺满，
+ *     三列时左右两张与 Part 0 的首尾对齐、中间的自动居中，边缘在同一条线上
+ * ========================================================================== */
+/* 三个区块的外框宽度统一：1168px 居中（与 Part 0 的四列同宽） */
+.weather-grid,
+.compare-rows,
+.tab-panel {
+  max-width: var(--row-w, 1168px);
+  margin-inline: auto;
+}
+
+.weather-grid,
+.compare-row,
+.tab-panel {
+  display: grid;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+/* Part 0：四列铺满 */
+.weather-grid {
+  grid-template-columns: repeat(4, var(--card-w, 280px));
+}
+
+/* Part 1 / Part 2：列数 = 这一行的场景数，卡片宽度与 Part 0 相同 */
+.compare-row,
+.tab-panel {
+  grid-template-columns: repeat(var(--cols, 3), var(--card-w, 280px));
+}
+
+.weather-card {
+  padding: 10px 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.weather-card__title {
+  margin: 0 0 8px;
+  color: var(--text-2);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.weather-card__viewer {
+  display: flex;
+  justify-content: center;
+}
+
+/* ------------------------- Part 1 案例行（按天气分组，每组横向一排） */
+.compare-rows {
+  display: grid;
+  gap: 20px;
+}
+
+.compare-row {
+  align-items: start;
+}
+
+.compare-card,
+.case-card {
+  padding: 10px 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.compare-card__title,
+.case-card__title {
+  margin: 0 0 8px;
+  color: var(--text-2);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.compare-card__viewer,
+.case-card__row {
+  display: flex;
+  justify-content: center;
+}
+
+/* 一个场景里的三排（2 种方法 + Ours + GT）：排与排之间用一条淡虚线分开 */
+.case-card__row + .case-card__row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+video-compare,
+multi-compare,
+auto-video {
+  width: 100%;
+}
+
+/* ------------------------------------------------------------ 图片滑杆 */
+.img-slider {
+  position: relative;
+  width: min(100%, var(--img-native, 256px));
+  margin-inline: auto;
+}
+
+.img-slider__el {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0b0d10;
+}
+
+.img-slider img {
+  image-rendering: var(--media-rendering, auto);
+}
+
+.media-tag {
+  position: absolute;
+  top: 5px;
+  z-index: 6;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(12, 15, 20, 0.55);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.media-tag--left {
+  left: 5px;
+}
+
+.media-tag--right {
+  right: 5px;
+}
+
+/* --------------------------------------------- Part 2 天气 Tab 与面板 */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab {
+  padding: 6px 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.tab[aria-selected='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ------------------------------------------------------- 资源缺失占位 */
+.media-missing {
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 96px;
+  padding: 14px;
+  text-align: center;
+  background: repeating-linear-gradient(45deg, var(--surface-2), var(--surface-2) 10px, transparent 10px, transparent 20px);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+.media-missing--overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.media-missing b {
+  font-size: 12.5px;
+  color: var(--danger);
+}
+
+.media-missing code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-3);
+  word-break: break-all;
+}
+
+/* --------------------------------------------------------- 资源自检面板 */
+/* 页面上没有入口按钮，控制台执行 checkAssets() 才会出现 */
+.asset-report {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 900;
+  width: min(560px, 92vw);
+  max-height: 62vh;
+  overflow: auto;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+}
+
+.report-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.report-sum {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.report-sum--warn {
+  color: var(--danger);
+}
+
+.report-list {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.report-item {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.report-item code {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  word-break: break-all;
+}
+
+.report-item--missing .report-where {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.report-item--unknown .report-where {
+  color: var(--gt);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------- 响应式 */
+/* 屏幕放不下固定列宽时，改成弹性列 + 自动折行 */
+@media (max-width: 1210px) {
+  .weather-grid,
+  .compare-row,
+  .tab-panel {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .weather-grid,
+  .compare-row,
+  .tab-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
