@@ -5,7 +5,8 @@
  * · 你通常只需要改这个文件：媒体根目录、扩展名、场景清单、方法清单、文案
  *
  * 命名规则（与 demo_final 目录一致，可按需改写下面的 path* 函数）：
- *   Part 0（四类天气场景）: {MEDIA_ROOT}/input_videos/weather/input_{天气目录}{EXT}
+ *   Part 0（四类天气场景）: {MEDIA_ROOT}/input_videos/weather/input_{天气场景名}{EXT}
+ *                          （场景名 = CATEGORIES 的 scene，可不同于天气目录名 folder）
  *   Part 1（基线对比）    : {MEDIA_ROOT}/volsplat/{天气目录}/{文件名}{EXT}
  *                          {MEDIA_ROOT}/ours/{天气目录}/{文件名}{EXT}
  *   Part 2（方法对比）    : {MEDIA_ROOT}/compare/{方法名}/{天气目录}/{文件名}{EXT}
@@ -36,13 +37,14 @@ window.SITE = (function () {
   };
 
   /* ---------------------------------------------------------------------
-   * 2) 四类天气（folder = demo_final 里的真实目录名）
+   * 2) 四类天气（folder = demo_final 里各方法目录下的真实目录名；
+   *               scene  = input_videos/weather/ 下输入视频的文件名后缀，两者可能不同）
    * ------------------------------------------------------------------- */
   const CATEGORIES = [
-    { id: 'rain',      label: 'Rain',      folder: 'Rain',      desc: '雨天退化场景' },
-    { id: 'snow',      label: 'Snow',      folder: 'Snow',      desc: '雪天退化场景' },
-    { id: 'fog',       label: 'Fog',       folder: 'Foggy',     desc: '雾天退化场景' },
-    { id: 'sandstorm', label: 'Sandstorm', folder: 'SandStorm', desc: '沙尘退化场景' },
+    { id: 'rain',      label: 'Rain',      folder: 'Rain',      scene: 'Rain',      desc: '雨天退化场景' },
+    { id: 'snow',      label: 'Snow',      folder: 'Snow',      scene: 'Snow',      desc: '雪天退化场景' },
+    { id: 'fog',       label: 'Fog',       folder: 'Foggy',     scene: 'Fog',       desc: '雾天退化场景' },
+    { id: 'sandstorm', label: 'Sandstorm', folder: 'SandStorm', scene: 'SandStorm', desc: '沙尘退化场景' },
   ];
 
   /* ---------------------------------------------------------------------
@@ -90,8 +92,8 @@ window.SITE = (function () {
   const join = (...parts) => parts.filter(Boolean).join('/');
   const fileName = (c, folder) => `${folder}_${c.scene}_${c.intensity}_${c.view}${CONFIG.EXT}`;
 
-  // Part 0：四类天气的场景视频
-  const pathScene = (w) => join(CONFIG.MEDIA_ROOT, 'input_videos', 'weather', `input_${w.folder}${CONFIG.EXT}`);
+  // Part 0：四类天气的场景视频（用 scene 而不是 folder：雾天的文件名是 input_Fog，目录却是 Foggy）
+  const pathScene = (w) => join(CONFIG.MEDIA_ROOT, 'input_videos', 'weather', `input_${w.scene}${CONFIG.EXT}`);
   // Part 1：基线 VolSplat 与 本方法 Ours
   const pathVolsplat = (c) => join(CONFIG.MEDIA_ROOT, 'volsplat', cat(c.weather).folder, fileName(c, cat(c.weather).folder));
   const pathOurs     = (c) => join(CONFIG.MEDIA_ROOT, 'ours', cat(c.weather).folder, fileName(c, cat(c.weather).folder));
@@ -123,7 +125,8 @@ window.SITE = (function () {
     items.push(media('GT', 'GT', pathGT(c), 'gt'));
     return {
       id: `${c.weather}-${c.scene}-${c.intensity}-${c.view}`,
-      title: `${c.scene} · ${c.intensity} · ${c.view.replace(/^view_/, '')}`,
+      // 标题只到"强度"为止，不显示视角（high / low / middle），与 Part 1 保持一致
+      title: `${c.scene} · ${c.intensity}`,
       weather: w.label,
       scene: c.scene,
       intensity: c.intensity,
@@ -219,12 +222,12 @@ window.SITE = (function () {
     },
 
     part1: {
-      title: 'Our Method',
+      title: 'Our Feed-Forward GS Results under Four Adverse Weather Conditions',
       items: part1Items,
     },
 
     part2: {
-      title: 'Comparison',
+      title: 'Comparison with State-of-the-Art Methods',
       categories: part2Categories,
     },
   };
