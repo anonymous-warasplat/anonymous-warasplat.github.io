@@ -131,6 +131,107 @@ a {
   letter-spacing: -0.02em;
 }
 
+/* 标题下方的作者 / 单位 / 资源链接 */
+.site-meta {
+  margin-top: 20px;
+}
+
+.authors {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.authors .author {
+  white-space: nowrap;
+}
+
+.authors sup {
+  margin-left: 1px;
+  font-size: 0.72em;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.authors sup.corr {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.affiliations {
+  margin: 8px 0 0;
+  font-size: 13.5px;
+  color: var(--text-2);
+}
+
+.affiliations .affiliation {
+  white-space: nowrap;
+}
+
+.affiliations sup {
+  margin-right: 3px;
+  font-size: 0.8em;
+  color: var(--text-3);
+}
+
+.affiliations .affiliation + .affiliation::before {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 12px;
+  margin: 0 12px;
+  vertical-align: -1px;
+  background: var(--border);
+}
+
+.corresponding {
+  margin: 8px 0 0;
+  font-size: 13.5px;
+  color: var(--text-2);
+}
+
+.links {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.link-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.link-btn--pending {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.link-btn--pending:hover {
+  border-color: var(--border);
+  color: var(--text);
+  box-shadow: none;
+  transform: none;
+}
+
 /* --------------------------------------------------------------- 区块 */
 .section {
   padding: 44px 0 8px;

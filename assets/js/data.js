@@ -185,7 +185,38 @@ window.SITE = (function () {
     methods: METHODS,
 
     meta: {
-      title: 'WaraSplat',
+      // 完整论文标题（与投稿论文一致）
+      title: 'WaraSplat: Weather-Aware Feed-Forward Gaussian Reconstruction under Adverse Weather',
+
+      // 作者：与投稿论文的署名及顺序一致
+      //   marker       = 该作者所属单位的序号（对应下面 affiliations 的行号，从 1 开始）
+      //   corresponding = 通信作者（姓名旁加 * 上标，并在下方显示邮箱）
+      authors: [
+        { name: 'Xia Yuan',     marker: [1, 2] },
+        { name: 'Jiahao Zhang', marker: [2] },
+        { name: 'Jiaxin Yi',    marker: [2] },
+        { name: 'Yanli Liu',    marker: [1] },
+        { name: 'Yanci Zhang',  marker: [1] },
+        { name: 'Guanyu Xing',  marker: [1, 3], corresponding: true },
+      ],
+
+      // 单位：第几行就对应作者右上角的序号几（页面自动加 ¹ ² ³ 上标）
+      affiliations: [
+        'National Key Laboratory of Fundamental Science on Synthetic Vision, Sichuan University',
+        'School of Computer Science, Chengdu University of Information Technology',
+        'School of Cyber Science and Engineering, Sichuan University',
+      ],
+
+      // 通信作者邮箱（为空则不显示邮箱链接）
+      correspondingEmail: 'xingguanyu@scu.edu.cn',
+
+      // Paper / Video / Code 资源链接：href 留空 = 显示灰色"待发布"徽章；
+      // 填上地址即变为可点击按钮（如 arXiv、GitHub、演示视频地址）
+      links: {
+        paper: { label: 'Paper', href: '' },
+        video: { label: 'Video', href: '' },
+        code:  { label: 'Code',  href: '' },
+      },
     },
 
     options: {

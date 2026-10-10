@@ -57,6 +57,10 @@
     const title = m.title || 'WaraSplat';
     const h1 = $('#siteTitle');
     if (h1) h1.textContent = title;
+    renderAuthors(m);
+    renderAffiliations(m);
+    renderCorresponding(m);
+    renderLinks(m);
     const p0Name = $('#part0Name');
     if (p0Name) p0Name.textContent = (SITE.part0 && SITE.part0.title) || '';
     const p1Title = $('#part1Title');
@@ -64,6 +68,71 @@
     const p2Title = $('#part2Title');
     if (p2Title) p2Title.innerHTML = '<span class="pin">Part 2</span> ' + ((SITE.part2 && SITE.part2.title) || 'Comparison');
     document.title = title;
+  }
+
+  /** 作者行：姓名 + 单位上标序号；通信作者追加 * 上标 */
+  function renderAuthors(m) {
+    const box = $('#siteAuthors');
+    if (!box) return;
+    box.innerHTML = '';
+    const authors = m.authors || [];
+    authors.forEach((a, i) => {
+      if (i) box.append(document.createTextNode(', '));
+      const span = el('span', { class: 'author' }, a.name || '');
+      if (a.marker && a.marker.length) span.append(el('sup', { text: a.marker.join(',') }));
+      if (a.corresponding) span.append(el('sup', { class: 'corr', text: '*' }));
+      box.append(span);
+    });
+    box.hidden = !authors.length;
+  }
+
+  /** 单位行：行号即作者右上角的序号，页面自动加 ¹ ² ³ 上标 */
+  function renderAffiliations(m) {
+    const box = $('#siteAffiliations');
+    if (!box) return;
+    box.innerHTML = '';
+    const affs = m.affiliations || [];
+    affs.forEach((text, i) => {
+      const span = el('span', { class: 'affiliation' }, el('sup', { text: String(i + 1) }), text);
+      box.append(span);
+    });
+    box.hidden = !affs.length;
+  }
+
+  /** 通信作者邮箱 */
+  function renderCorresponding(m) {
+    const box = $('#siteCorresponding');
+    if (!box) return;
+    box.innerHTML = '';
+    const author = (m.authors || []).find((a) => a.corresponding);
+    if (!author) {
+      box.hidden = true;
+      return;
+    }
+    const email = m.correspondingEmail || '';
+    box.append(
+      el('span', { class: 'corr' }, '✉ Corresponding author: '),
+      el('span', { text: author.name }),
+      email ? el('a', { href: 'mailto:' + email, text: '（' + email + '）' }) : null
+    );
+    box.hidden = false;
+  }
+
+  /** Paper / Video / Code 徽章：href 为空时显示灰色"待发布"状态 */
+  function renderLinks(m) {
+    const nav = $('#siteLinks');
+    if (!nav) return;
+    nav.innerHTML = '';
+    const links = m.links || {};
+    ['paper', 'video', 'code'].forEach((key) => {
+      const l = links[key];
+      if (!l) return;
+      const href = l.href || '';
+      const node = href
+        ? el('a', { class: 'link-btn', href: href, target: '_blank', rel: 'noopener', text: l.label })
+        : el('span', { class: 'link-btn link-btn--pending', text: l.label, title: '链接待补充' });
+      nav.append(node);
+    });
   }
 
   /* --------------------------------------------------------- 2. 公共组件 */
