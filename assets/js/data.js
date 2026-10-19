@@ -194,16 +194,17 @@ window.SITE = (function () {
       authors: [
         { name: 'Xia Yuan',     marker: [1, 2] },
         { name: 'Jiahao Zhang', marker: [2] },
-        { name: 'Jiaxin Yi',    marker: [2] },
+        { name: 'Jing Liao',    marker: [3] },
         { name: 'Yanli Liu',    marker: [1] },
         { name: 'Yanci Zhang',  marker: [1] },
-        { name: 'Guanyu Xing',  marker: [1, 3], corresponding: true },
+        { name: 'Guanyu Xing',  marker: [4], corresponding: true },
       ],
 
       // 单位：第几行就对应作者右上角的序号几（页面自动加 ¹ ² ³ 上标）
       affiliations: [
         'National Key Laboratory of Fundamental Science on Synthetic Vision, Sichuan University',
-        'School of Computer Science, Chengdu University of Information Technology',
+        'School of Computer, Chengdu University of Information Technology',
+        'Department of Computer Science, City University of Hong Kong',
         'School of Cyber Science and Engineering, Sichuan University',
       ],
 
