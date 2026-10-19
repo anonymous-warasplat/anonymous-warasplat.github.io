@@ -215,7 +215,7 @@ window.SITE = (function () {
       // 填上地址即变为可点击按钮（如 arXiv、GitHub、演示视频地址）
       links: {
         paper: { label: 'Paper', href: '' },
-        video: { label: 'Video', href: '' },
+        video: { label: 'Demo', href: '' },
         code:  { label: 'Code',  href: '' },
       },
     },
