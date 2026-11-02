@@ -178,10 +178,10 @@ window.SITE = (function () {
 
   /* ---------------------------------------------------------------------
    * 9) Part 3 数据：NVS on Public Datasets（3 个公开场景 × 6 种天气）
-   *    数据位于仓库外的 WARA_GS_output_newdata，用相对路径 ../../ 指向；
-   *    部署到 GitHub Pages 前需把该目录拷进站点根目录并把 PART3_ROOT 改成 'WARA_GS_output_newdata'。
+   *    视频放在仓库内的 demo_public 目录（源目录为 WARA_GS_output_newdata，
+   *    用 copy_part3_media.ps1 只拷贝页面实际引用的文件）。
    * ------------------------------------------------------------------- */
-  const PART3_ROOT = '../../WARA_GS_output_newdata';
+  const PART3_ROOT = 'demo_public';
 
   const PART3_WEATHERS = [
     { id: 'rain_snow',      label: 'Rain + Snow' },
