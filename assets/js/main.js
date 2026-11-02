@@ -71,7 +71,7 @@
     const p2Title = $('#part2Title');
     if (p2Title) p2Title.innerHTML = '<span class="pin">Part 2</span> ' + ((SITE.part2 && SITE.part2.title) || 'Comparison');
     const p3Title = $('#part3Title');
-    if (p3Title) p3Title.innerHTML = '<span class="pin">Part 3</span> ' + ((SITE.part3 && SITE.part3.title) || 'Our Feed-Forward GS Results under the Public Datasets');
+    if (p3Title) p3Title.innerHTML = '<span class="pin">Part 3</span> ' + ((SITE.part3 && SITE.part3.title) || 'Comparison with State-of-the-Art Methods on the Public Dataset');
     document.title = title;
   }
 
@@ -376,11 +376,11 @@
     const card = el('article', { class: 'case-card', id: 'p3-' + scene.id },
       el('p', { class: 'case-card__title', text: scene.label })
     );
-    // 最前面单独展示一行 Input（退化输入），再展示对比结果
+    // 最前面单独展示一行「恶劣天气场景」（合成退化后的场景观测，非 NVS 输入），再展示对比结果
     if (scene.input && scene.input.src) {
       card.append(
         el('div', { class: 'case-card__input' },
-          el('p', { class: 'case-card__input-label', text: 'Input' }),
+          el('p', { class: 'case-card__input-label', text: 'Adverse Weather Scene' }),
           el('div', { class: 'case-card__row' },
             el('auto-video', {
               src: scene.input.src,

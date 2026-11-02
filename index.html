@@ -58,7 +58,11 @@
     <section class="section" id="part2" aria-labelledby="part2Title">
       <header class="section-head">
         <!-- 注意：同上，这里的标题只是占位，会被 main.js 用 data.js 的 SITE.part2.title 覆盖；改标题请改 data.js -->
-        <h2 class="section-title" id="part2Title"><span class="pin">Part 2</span> Comparison with State-of-the-Art Methods</h2>
+        <h2 class="section-title" id="part2Title"><span class="pin">Part 2</span> Comparison with State-of-the-Art Methods on the WARA-Bench Dataset</h2>
+
+        <p class="section-subtitle">
+          Comparison with state-of-the-art methods for feed-forward Gaussian splatting novel view synthesis on our WARA-Bench dataset under four adverse weather conditions.
+        </p>
       </header>
       <div class="tabs" id="part2Tabs" role="tablist" aria-label="天气类别"></div>
       <div class="tab-panels" id="part2Panels"></div>
@@ -68,7 +72,13 @@
     <section class="section" id="part3" aria-labelledby="part3Title">
       <header class="section-head">
         <!-- 标题只是占位，会被 main.js 用 data.js 的 SITE.part3.title 覆盖 -->
-        <h2 class="section-title" id="part3Title"><span class="pin">Part 3</span> Our Feed-Forward GS Results under the Public Datasets</h2>
+        <h2 class="section-title" id="part3Title"><span class="pin">Part 3</span> Comparison with State-of-the-Art Methods on the Public Dataset</h2>
+
+        <!-- 点明任务类型，避免与「退化场景观测」混淆 -->
+        <p class="section-subtitle">
+          Comparison with state-of-the-art methods for feed-forward Gaussian splatting novel view synthesis on public datasets under adverse weather.
+          Each card first shows the adverse weather scene, followed by the rendered novel views.
+        </p>
       </header>
       <div class="tabs" id="part3Tabs" role="tablist" aria-label="天气"></div>
       <div class="tab-panels" id="part3Panels"></div>

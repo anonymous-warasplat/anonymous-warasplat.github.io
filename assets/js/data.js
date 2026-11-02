@@ -217,7 +217,8 @@ window.SITE = (function () {
       );
       const ours = media('Ours', 'Ours', join(PART3_ROOT, s.id, 'ours', w.id + CONFIG.EXT), 'ours');
       const gt = media('GT', 'GT', join(PART3_ROOT, s.id, s.gt), 'gt');
-      const input = media('Input', 'Input', join(PART3_ROOT, s.id, 'input', `${s.id}_input_${w.id}_${s.input}${CONFIG.EXT}`), 'input');
+      // 注意：这段是「合成恶劣天气后的场景观测」，不是 NVS 的新视角输入
+      const input = media('Input', 'Adverse Weather Scene', join(PART3_ROOT, s.id, 'input', `${s.id}_input_${w.id}_${s.input}${CONFIG.EXT}`), 'input');
       return {
         id: `${s.id}-${w.id}`,
         scene: s.id,
@@ -314,7 +315,7 @@ window.SITE = (function () {
     },
 
     part0: {
-      title: '3D Scenes under Adverse Weather',
+      title: 'WARA-Bench: 3D Scenes under Adverse Weather',
       items: part0Items,
     },
 
@@ -324,12 +325,12 @@ window.SITE = (function () {
     },
 
     part2: {
-      title: 'Comparison with State-of-the-Art Methods',
+      title: 'Comparison with State-of-the-Art Methods on the WARA-Bench Dataset',
       categories: part2Categories,
     },
 
     part3: {
-      title: 'Our Feed-Forward GS Results under the Public Datasets',
+      title: 'Comparison with State-of-the-Art Methods on the Public Dataset',
       weathers: part3Weathers,
     },
   };
