@@ -177,7 +177,59 @@ window.SITE = (function () {
     }));
 
   /* ---------------------------------------------------------------------
-   * 9) 导出（页面只读这几个字段）
+   * 9) Part 3 数据：NVS on Public Datasets（3 个公开场景 × 6 种天气）
+   *    数据位于仓库外的 WARA_GS_output_newdata，用相对路径 ../../ 指向；
+   *    部署到 GitHub Pages 前需把该目录拷进站点根目录并把 PART3_ROOT 改成 'WARA_GS_output_newdata'。
+   * ------------------------------------------------------------------- */
+  const PART3_ROOT = '../../WARA_GS_output_newdata';
+
+  const PART3_WEATHERS = [
+    { id: 'rain_snow',      label: 'Rain + Snow' },
+    { id: 'haze_rain',      label: 'Haze + Rain' },
+    { id: 'haze_rain_snow', label: 'Haze + Rain + Snow' },
+    { id: 'haze',           label: 'Haze' },
+    // { id: 'rain',        label: 'Rain' },   // 暂时去掉雨天
+    { id: 'snow',           label: 'Snow' },
+  ];
+
+  const PART3_METHODS = [
+    { key: 'AdaIR',          label: 'AdaIR' },
+    { key: 'DOD',            label: 'DOD' },
+    { key: 'MoCE-IR',        label: 'MoCE-IR' },
+    { key: 'PromptIR',       label: 'PromptIR' },
+    { key: 'ReSplat',        label: 'ReSplat' },
+    { key: 'WeatherRemover', label: 'WeatherRemover' },
+  ];
+
+  // 每个公开场景：GT 文件名、Input 文件名后缀（三者命名各不相同）
+  const PART3_SCENES = [
+    { id: 'bicycle', label: 'Bicycle', gt: 'gt/gt_nvs_t101.mp4',      input: '099-123_5s' },
+    { id: 'garden',  label: 'Garden',  gt: 'gt/gt_nvs_t45.mp4',       input: '043-067_5s' },
+    { id: 'factory', label: 'Factory', gt: 'gt/gt_nvs_t10.mp4', input: '000-033_5fps' },
+  ];
+
+  const part3Weathers = PART3_WEATHERS.map((w) => ({
+    id: w.id,
+    label: w.label,
+    scenes: PART3_SCENES.map((s) => {
+      const methods = PART3_METHODS.map((m) =>
+        media(m.key, m.label, join(PART3_ROOT, 'compare', m.key, s.id, w.id + CONFIG.EXT), 'method')
+      );
+      const ours = media('Ours', 'Ours', join(PART3_ROOT, s.id, 'ours', w.id + CONFIG.EXT), 'ours');
+      const gt = media('GT', 'GT', join(PART3_ROOT, s.id, s.gt), 'gt');
+      const input = media('Input', 'Input', join(PART3_ROOT, s.id, 'input', `${s.id}_input_${w.id}_${s.input}${CONFIG.EXT}`), 'input');
+      return {
+        id: `${s.id}-${w.id}`,
+        scene: s.id,
+        label: s.label,
+        input,
+        media: methods.concat(ours, gt),
+      };
+    }),
+  }));
+
+  /* ---------------------------------------------------------------------
+   * 10) 导出（页面只读这几个字段）
    * ------------------------------------------------------------------- */
   return {
     config: CONFIG,
@@ -215,7 +267,7 @@ window.SITE = (function () {
       // 填上地址即变为可点击按钮（如 arXiv、GitHub、演示视频地址）
       links: {
         paper: { label: 'Paper', href: '' },
-        video: { label: 'Demo', href: '' },
+        video: { label: 'Project', href: 'index.html' },
         code:  { label: 'Code',  href: '' },
       },
     },
@@ -237,7 +289,7 @@ window.SITE = (function () {
         // 想改分组/顺序，只改这里：数组里写方法 key，每排一行
         rows: [
           ['AdaIR', 'DOD'],
-          ['MoCE-IR', 'PromptIR'],
+          ['PromptIR', 'MoCE-IR'],
           ['ReSplat', 'WeatherRemover'],
         ],
         // 每一排末尾固定跟着的两路（顺序 = 从左到右）：先 Ours，最后 GT
@@ -245,6 +297,19 @@ window.SITE = (function () {
         minGap: 2,             // 相邻两块画面之间允许的最小宽度（百分比，越小越灵活）
         autoplay: true,        // 进入视口自动播放（静音）
         loop: true,            // 循环播放
+      },
+      part3: {
+        // 与 Part 2 保持一致：同样的 6 种 baseline，按 2 : 2 : 2 分三排；
+        // 每排末尾固定接 Ours、GT 作为参考
+        rows: [
+          ['AdaIR', 'DOD'],
+          ['PromptIR', 'MoCE-IR'],
+          ['ReSplat', 'WeatherRemover'],
+        ],
+        tail: ['Ours', 'GT'],
+        minGap: 2,
+        autoplay: true,
+        loop: true,
       },
     },
 
@@ -261,6 +326,11 @@ window.SITE = (function () {
     part2: {
       title: 'Comparison with State-of-the-Art Methods',
       categories: part2Categories,
+    },
+
+    part3: {
+      title: 'Our Feed-Forward GS Results under the Public Datasets',
+      weathers: part3Weathers,
     },
   };
 })();

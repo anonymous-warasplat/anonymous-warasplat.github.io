@@ -101,6 +101,21 @@
   border-top: 1px dashed var(--border);
 }
 
+/* Part 3 每张场景卡片最前面单独展示 Input（退化输入）的一行 */
+.case-card__input {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.case-card__input-label {
+  margin: 0 0 6px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
 video-compare,
 multi-compare,
 auto-video {

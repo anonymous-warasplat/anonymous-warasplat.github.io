@@ -14,13 +14,16 @@
   const SITE = window.SITE || {};
   const OPT1 = (SITE.options && SITE.options.part1) || {};
   const OPT2 = (SITE.options && SITE.options.part2) || {};
+  const OPT3 = (SITE.options && SITE.options.part3) || {};
   const CATEGORIES = (SITE.part2 && SITE.part2.categories) || [];
+  const PART3_WEATHERS = (SITE.part3 && SITE.part3.weathers) || [];
   const t = (v, fallback) => (v === undefined || v === null ? fallback : v);
 
   const state = {
     autoplay: OPT1.autoplay !== false && OPT2.autoplay !== false,
     divider: t(OPT1.divider, 50),
     tab: 0,
+    part3Tab: 0,
   };
 
   /* ------------------------------------------------------------------ 工具 */
@@ -67,6 +70,8 @@
     if (p1Title) p1Title.innerHTML = '<span class="pin">Part 1</span> ' + ((SITE.part1 && SITE.part1.title) || 'Our Method');
     const p2Title = $('#part2Title');
     if (p2Title) p2Title.innerHTML = '<span class="pin">Part 2</span> ' + ((SITE.part2 && SITE.part2.title) || 'Comparison');
+    const p3Title = $('#part3Title');
+    if (p3Title) p3Title.innerHTML = '<span class="pin">Part 3</span> ' + ((SITE.part3 && SITE.part3.title) || 'Our Feed-Forward GS Results under the Public Datasets');
     document.title = title;
   }
 
@@ -343,13 +348,126 @@
       b.setAttribute('aria-selected', String(on));
       b.tabIndex = on ? 0 : -1;
     });
-    document.querySelectorAll('.tab-panel').forEach((p, i) => {
+    document.querySelectorAll('#part2Panels .tab-panel').forEach((p, i) => {
       p.hidden = i !== state.tab;
     });
     renderPanel(state.tab);
   }
 
-  /* ------------------------------------------------------- 5. 资源自检 */
+  /* --------------------------------------------- 5. Part 3 · Public Datasets */
+  /** 每个场景卡片：6 种 baseline 分排对比，每排末尾固定接 Ours、GT 作为参考 */
+  function part3Rows(scene) {
+    const tail = t(OPT3.tail, ['Ours', 'GT'])
+      .map((key) => mediaByKey(scene, key))
+      .filter(Boolean);
+    const groups = OPT3.rows;
+    let rows;
+    if (groups && groups.length) {
+      rows = groups.map((group) => group.map((key) => mediaByKey(scene, key)).filter(Boolean));
+    } else {
+      const methods = (scene.media || []).filter((m) => m.role === 'method');
+      rows = [];
+      for (let i = 0; i < methods.length; i += 3) rows.push(methods.slice(i, i + 3));
+    }
+    return rows.map((row) => row.concat(tail)).filter((row) => row.length);
+  }
+
+  function buildPart3SceneCard(scene) {
+    const card = el('article', { class: 'case-card', id: 'p3-' + scene.id },
+      el('p', { class: 'case-card__title', text: scene.label })
+    );
+    // 最前面单独展示一行 Input（退化输入），再展示对比结果
+    if (scene.input && scene.input.src) {
+      card.append(
+        el('div', { class: 'case-card__input' },
+          el('p', { class: 'case-card__input-label', text: 'Input' }),
+          el('div', { class: 'case-card__row' },
+            el('auto-video', {
+              src: scene.input.src,
+              poster: scene.input.poster || null,
+              'native-width': scene.input.native || 256,
+              aspect: 1,
+              start: 0,
+              loop: true,
+              autoplay: state.autoplay ? true : null,
+            })
+          )
+        )
+      );
+    }
+    part3Rows(scene).forEach((items) => {
+      const viewer = el('multi-compare', {
+        'native-width': (SITE.config && SITE.config.NATIVE_WIDTH) || 256,
+        aspect: 1,
+        scale: 1,
+        'min-gap': t(OPT3.minGap, 2),
+        start: 0,
+        loop: OPT3.loop !== false ? true : null,
+        autoplay: state.autoplay ? true : null,
+      });
+      viewer.setItems(
+        items.map((m) => ({ src: m.src, label: m.label, type: m.type, poster: m.poster, role: m.role }))
+      );
+      viewer.addEventListener('mc-open', (e) => {
+        lightbox().open(
+          items.map((m) => ({ src: m.src, type: m.type, label: scene.label + ' · ' + m.label, native: m.native })),
+          e.detail.index
+        );
+      });
+      card.append(el('div', { class: 'case-card__row' }, viewer));
+    });
+    return card;
+  }
+
+  function renderPart3Tabs() {
+    const box = $('#part3Tabs');
+    if (!box) return;
+    box.innerHTML = '';
+    PART3_WEATHERS.forEach((w, i) => {
+      box.append(
+        el('button', {
+          type: 'button',
+          class: 'tab',
+          id: 'tab3-' + w.id,
+          role: 'tab',
+          text: w.label,
+          dataset: { index: i },
+          'aria-selected': String(i === state.part3Tab),
+          'aria-controls': 'part3-' + w.id,
+          onclick: () => activatePart3Tab(i),
+        })
+      );
+    });
+  }
+
+  function renderPart3Panel(index) {
+    const weather = PART3_WEATHERS[index];
+    if (!weather) return;
+    const panel = document.getElementById('part3-' + weather.id);
+    if (!panel || panel.dataset.rendered === '1') return;
+    panel.dataset.rendered = '1';
+    panel.innerHTML = '';
+    const cards = weather.scenes || [];
+    panel.style.setProperty('--cols', String(Math.min(3, Math.max(1, cards.length))));
+    cards.forEach((scene) => panel.append(buildPart3SceneCard(scene)));
+    if (!cards.length) panel.append(el('p', { class: 'empty-hint', text: '该天气下暂无场景。' }));
+  }
+
+  function activatePart3Tab(index) {
+    if (!PART3_WEATHERS.length) return;
+    state.part3Tab = (index + PART3_WEATHERS.length) % PART3_WEATHERS.length;
+    document.querySelectorAll('#part3Tabs .tab').forEach((b) => {
+      const on = Number(b.dataset.index) === state.part3Tab;
+      b.setAttribute('aria-selected', String(on));
+      b.tabIndex = on ? 0 : -1;
+    });
+    document.querySelectorAll('#part3Panels .tab-panel').forEach((p, i) => {
+      p.hidden = i !== state.part3Tab;
+    });
+    renderPart3Panel(state.part3Tab);
+  }
+
+  /* ------------------------------------------------------- 6. 资源自检 */
   /** 控制台里执行 checkAssets() 即可列出所有媒体路径的正常 / 缺失情况 */
   function collectAssets() {
     const list = [];
@@ -359,6 +477,10 @@
       push(it.second, 'Part 1 · ' + it.title + ' · ' + it.second.label);
     });
     CATEGORIES.forEach((cat) => (cat.cases || []).forEach((c) => (c.media || []).forEach((m) => push(m, 'Part 2 · ' + cat.label + ' · ' + c.title + ' · ' + m.label))));
+    PART3_WEATHERS.forEach((w) => (w.scenes || []).forEach((s) => {
+      if (s.input) push(s.input, 'Part 3 · ' + w.label + ' · ' + s.label + ' · ' + s.input.label);
+      (s.media || []).forEach((m) => push(m, 'Part 3 · ' + w.label + ' · ' + s.label + ' · ' + m.label));
+    }));
     return list;
   }
 
@@ -472,7 +594,20 @@
     });
     activateTab(0);
     handleInitialHash();
-    // Tab 键盘操作：← → 切换，Home / End 到首尾
+    // Part 3 · 天气 Tab：6 种天气切换，每种天气下横向展示 3 个公开场景
+    renderPart3Tabs();
+    PART3_WEATHERS.forEach((w) => {
+      const panel = el('section', {
+        class: 'tab-panel',
+        id: 'part3-' + w.id,
+        role: 'tabpanel',
+        'aria-labelledby': 'tab3-' + w.id,
+      });
+      panel.hidden = true;
+      $('#part3Panels').append(panel);
+    });
+    activatePart3Tab(0);
+    // Tab 键盘操作：← → 切换，Home / End 到首尾（Part 2）
     $('#part2Tabs').addEventListener('keydown', (e) => {
       const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
       if (step) activateTab(state.tab + step);
@@ -481,6 +616,17 @@
       else return;
       e.preventDefault();
       const btn = document.querySelector('#part2Tabs .tab[aria-selected="true"]');
+      if (btn) btn.focus();
+    });
+    // Part 3 场景 Tab 键盘操作
+    $('#part3Tabs').addEventListener('keydown', (e) => {
+      const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (step) activatePart3Tab(state.part3Tab + step);
+      else if (e.key === 'Home') activatePart3Tab(0);
+      else if (e.key === 'End') activatePart3Tab(PART3_WEATHERS.length - 1);
+      else return;
+      e.preventDefault();
+      const btn = document.querySelector('#part3Tabs .tab[aria-selected="true"]');
       if (btn) btn.focus();
     });
   }
